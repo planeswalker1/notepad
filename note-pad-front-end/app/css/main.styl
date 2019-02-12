@@ -1,0 +1,38 @@
+html
+  box-sizing border-box
+
+*,
+*:before,
+*:after
+  box-sizing: inherit
+
+.container
+  margin: 0 auto
+  max-width: 1360px
+
+.modal
+  background-color #000
+  background-color rgba(0, 0, 0, .5)
+  display none
+  height 100%
+  overflow auto
+  position fixed
+  left 0
+  top 0
+  width 100%
+  z-index 100
+
+.modal__content
+  background-color white
+  border 1px solid #888
+  border-radius 5px
+  max-width 90%
+  margin 10% auto
+  padding 2rem
+  text-align center
+
+.error-message
+  color red
+  font-weight bold
+  margin 1rem 0
+  visibility hidden

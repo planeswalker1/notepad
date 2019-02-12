@@ -1,0 +1,30 @@
+pseudo code
+what are my base objects:
+  list
+  users
+
+what is in a user
+  name
+  date
+  email
+  pages //rip
+
+what is in a page
+  name
+  date
+  text
+
+===================================
+what i want to do today
+===================================
+
+have users contain a reference to their pages
+have a route where you can add a page to the user object
+authentication
+
+// "body-parser": "^1.18.3",
+// "debug": "^4.1.1",
+// "express": "^4.16.4",
+// "mongoose": "^5.4.3",
+// "morgan": "^1.9.1",
+// "nodemon": "^1.18.9"

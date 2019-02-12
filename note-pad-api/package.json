@@ -1,0 +1,23 @@
+{
+  "name": "notepad-api",
+  "version": "1.0.0",
+  "description": "Notepad App",
+  "main": "app.js",
+  "private": true,
+  "author": "Daniel Munoz <daniel.munozdev@gmail.com>",
+  "scripts": {
+    "build": "npm install",
+    "start": "nodemon app.js",
+    "dev": "mongod -f models/mongod.conf & node app.js",
+    "mongo-kill": "killall mongod"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.4.7",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.9"
+  }
+}

@@ -1,0 +1,16 @@
+extends template
+
+block main
+  .modal
+    .modal__content
+      h1 It worked
+  form.form--login
+    h1 Login
+    .error-message
+    .form__group
+      label.group__label(for="email") Email:
+      input.group__input(id="email" type="text" name="email")
+    .form__group
+      label.group__label(for="hash") Password:
+      input.group__input(id="hash" type="password" name="hash")
+    button(type="submit") Submit
