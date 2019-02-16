@@ -1,4 +1,6 @@
 const User = require('../models/schemas/user');
+const bcrypt = require('bcrypt');
+const config = require('../models/config')
 
 exports.getUsers = function (req, res, next) {
   User.find({}, function (err, users) {
@@ -14,7 +16,7 @@ exports.getUserById = function (req, res, next) {
     .populate('pages')
     .exec(function (err, user) {
       if (err) next(err);
-    
+
       console.log('found user', user);
       return res.json(user);
     });
@@ -50,11 +52,33 @@ exports.createUser = function (req, res, next) {
 };
 
 exports.updateUserById = function (req, res, next) {
-  User.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, user) {
-    if (err) return next(err);
-    
-    if (!user) return res.status(404).send('No user with that ID');
-    return res.sendStatus(200);
+  let userData = {};
+
+  if (req.body.email)
+    userData.email = req.body.email;
+
+  if (req.body.password)
+    userData.hash = req.body.password;
+
+  if (req.body.hash)
+    userData.hash = req.body.hash;
+
+  // hash before saving
+  // since mongoose findOneAndUpdate bypasses hooks
+  bcrypt.genSalt(config.saltRounds, function(err, salt) {
+    if (err) return console.log('error', err);
+
+    bcrypt.hash(userData.hash, salt, function(err, hash) {
+        // Store hash in your password DB.
+        userData.hash = hash;
+
+        User.findByIdAndUpdate(req.params.id, userData, { new: true }, function (err, user) {
+          if (err) return next(err);
+
+          if (!user) return res.status(404).send('No user with that ID');
+          return res.sendStatus(200);
+        });
+    });
   });
 };
 

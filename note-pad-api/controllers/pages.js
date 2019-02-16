@@ -4,13 +4,13 @@ const User = require('../models/schemas/user');
 exports.getPages = function (req, res, next) {
   Page.find({}, function (err, pages) {
     if (err) return next(err);
-    
+
     return res.json(pages);
   });
 };
 
 exports.getPageById = function (req, res, next) {
-  Page.findById(req.user.id, function (err, page) {
+  Page.findById(req.params.id, function (err, page) {
     if (err) return next(err);
 
     if (!page)return res.status(404).send('No page with that ID');
@@ -36,7 +36,7 @@ exports.createPage = function (req, res, next) {
     // created page
     console.log('created page', page);
     // look for user to store page id into
-    User.findById({ _id: req.user.id }, function (err, user) {
+    User.findById({ _id: req.params.id }, function (err, user) {
       console.log('found user to store page to', user);
       if (err) return next(err);
 
@@ -54,7 +54,7 @@ exports.createPage = function (req, res, next) {
 };
 
 exports.updatePage = function (req, res, next) {
-  Page.findByIdAndUpdate(req.user.id, req.body, { new: true }, function (err, page) {
+  Page.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, page) {
     if (err) return next(err);
 
     if (!page) return res.status(404).send('No user with that ID');
@@ -63,7 +63,7 @@ exports.updatePage = function (req, res, next) {
 };
 
 exports.deletePageById = function (req, res, next) {
-  Page.findByIdAndDelete(req.body.id, function (err, page) {
+  Page.findByIdAndDelete(req.params.id, function (err, page) {
     if (err) return next(err);
 
     if (!page) return res.status(404).send('No page with that ID');

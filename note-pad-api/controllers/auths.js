@@ -9,7 +9,7 @@ const config = require('../models/config');
   // check if the passwords match
   // if all are true
     // create and return a token containing the users: id, and notes
-    
+
 exports.loginUser = function (req, res, next) {
 
   console.log('user requesting to log in');
@@ -19,17 +19,17 @@ exports.loginUser = function (req, res, next) {
   console.log('checking if email and password exist');
   if (typeof req.body.email !== 'string') return res.status(400).send('Missing email');
   if (typeof req.body.password !== 'string') return res.status(400).send('Missing password');
-  
+
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) return next(err);
     if (!user) return res.status(400).send('No user with that email');
-    
+
     console.log('found user', user);
     console.log('comparing password');
-    User.comparePassword(req.body.hash, function (err, isMatch) {
+    user.comparePassword(req.body.password, function (err, isMatch) {
       if (err) return next(err);
       if (!isMatch) return res.status(401).send('Incorrect password');
-      
+
       console.log('creating token');
       var payload = {
         id: user._id,
@@ -58,7 +58,7 @@ exports.loginUser = function (req, res, next) {
 // send to next middleware transporting the token
 exports.validateToken = function (req, res, next) {
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  
+
   if (!token) return res.status(403).send('This endpoint requires a token');
 
   try {
@@ -71,7 +71,7 @@ exports.validateToken = function (req, res, next) {
     if (err) return next(err);
     if (!user) return res.status(403).send('Invalid user');
     if (token !== user.token) return res.status(403).send('Expired token');
-   
+
     req.user = decoded;
 
     next();
