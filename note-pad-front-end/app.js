@@ -12,9 +12,8 @@ const app = express();
 // serve favicon
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-if (app.get('env') === 'development') {
-  app.locals.dev = true;
-}
+// log if dev
+if (app.get('env') === 'development') app.locals.dev = true;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'app', 'views'));
@@ -28,9 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // log requests
-if (app.locals.dev) {
-  app.use(logger('dev'));
-}
+if (app.locals.dev) app.use(logger('dev'));
 
 // seperate routes to external router
 app.use('/', routes);
@@ -45,9 +42,7 @@ app.use(function (req, res, next) {
 // development error handler
 if (app.locals.dev) {
   app.use(function (err, req, res, next) {
-    if (err.status !== 404) {
-      console.log(err);
-    }
+    if (err.status !== 404) console.log(err);
     return res.sendStatus(err.status || 500);
   });
 }

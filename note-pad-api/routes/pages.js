@@ -4,11 +4,12 @@ let router = express.Router();
 const pages = require('../controllers/pages');
 const auths = require('../controllers/auths');
 
+
 router.route('/:id')
-  .post(pages.createPage)
-  .get(auths.validateToken, pages.getPageById)
-  .put(auths.validateToken, pages.updatePage)
-  .delete(auths.validateToken, pages.deletePageById);
+.post(pages.createPage)
+.get(pages.getPageById)
+.put(pages.updatePage)
+.delete(pages.deletePageById);
 
 router.route('/')
   .get(auths.validateToken, pages.getPages);

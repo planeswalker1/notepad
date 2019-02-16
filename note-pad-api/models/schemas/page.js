@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // schema for every note in a user's notes
-let pageSchema = new Schema({
-  name: {type: String, default: 'New Page'},
-  text: String
+var pageSchema = new Schema({
+  name: {type: String, default: 'New Note'},
+  text: {type: String, default: 'Hello World'}
   },
   {
     toObject: {getters: true},
@@ -17,8 +17,10 @@ let pageSchema = new Schema({
 
 pageSchema.pre('save', function (callback) {
   callback();
+  // TODO replace return and spaces with \n \s
+  // maybe dont have to and mongo takes care of it
 });
 
-let Page = mongoose.model('Page', pageSchema);
+var Page = mongoose.model('Page', pageSchema);
 
 module.exports = Page;

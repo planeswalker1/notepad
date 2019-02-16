@@ -1,1 +1,16 @@
 extends template
+
+block main
+  //- .modal
+  //-   .modal__content
+  //-     h1 It worked
+  form.form--register
+    h1 Register
+    .error-message
+    .form__group
+      label.group__label(for="email") Email:
+      input.group__input(id="email" type="email" name="email")
+    .form__group
+      label.group__label(for="password") Password:
+      input.group__input(id="password" type="password" name="password")
+    button(type="submit") Register
