@@ -14,7 +14,7 @@ router.get('/register', function (req, res, next) {
 
 router.post('/register', function (req, res, next) {
   console.log(req.body);
-  request.post(config.apiUrl + '/auth/token', {form:  req.body}).pipe(res);
+  request.post(config.apiUrl + '/users', {form:  req.body}).pipe(res);
 });
 
 router.get('/login', function (req, res, next) {

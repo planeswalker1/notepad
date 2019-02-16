@@ -28,8 +28,13 @@ inputs.forEach(function (input) {
 // form event listeners
 // ====================
 
-registerForm.addEventListener('submit', processRegister);
-loginForm.addEventListener('submit', processLogin);
+if (registerForm) {
+  registerForm.addEventListener('submit', processRegister);
+}
+
+if (loginForm) {
+  loginForm.addEventListener('submit', processLogin);
+}
 
 // =====================
 // form submit functions
@@ -52,7 +57,7 @@ function processRegister (event) {
       errorMessage += 'Password is invalid';
     }
   }
-  
+
   console.log('errorMessage', errorMessage);
   if (errorMessage) {
     return displayError(errorMessage);
@@ -88,19 +93,19 @@ function processLogin () {
 
   console.log('validating inputs');
   var errorMessage = '';
-  if (!form.email.value) {
-    error(form.email);
+  if (!loginForm.email.value) {
+    error(loginForm.email);
     errorMessage += 'Missing email!';
   }
-  if (!form.password.value) {
-    error(form.password);
+  if (!loginForm.password.value) {
+    error(loginForm.password);
     if (errorMessage) {
       errorMessage += '<br /> Missing password!';
     } else {
       errorMessage += 'Missing password!';
     }
   }
-  
+
   console.log('errorMessage', errorMessage);
   if (errorMessage) {
     return displayError(errorMessage);
@@ -108,8 +113,8 @@ function processLogin () {
 
   console.log('sending request');
   var userLoginData = {
-    email: form.email.value,
-    password: form.password.value
+    email: loginForm.email.value,
+    password: loginForm.password.value
   };
   console.log(userLoginData);
 
@@ -123,7 +128,7 @@ function processLogin () {
   fetch('/login', {
     headers: {'Content-Type': 'application/json'},
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(userLoginData)
   })
   .then(function (res) {
     if (!res.ok) {
@@ -180,8 +185,8 @@ function displayError(message) {
 // =====================
 function submitError (res, message) {
   if (res.status >= 400 && res.status < 500) {
-    return res.text().then(function (message) { 
-      displayError(message); 
+    return res.text().then(function (message) {
+      displayError(message);
     });
   }
   if (message) {
