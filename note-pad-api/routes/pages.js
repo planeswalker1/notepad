@@ -1,17 +1,17 @@
 const express = require('express');
+const app = express();
+
 let router = express.Router();
 
 const pages = require('../controllers/pages');
 const auths = require('../controllers/auths');
 
-
-router.route('/:id')
-.post(pages.createPage)
-.get(pages.getPageById)
-.put(pages.updatePage)
-.delete(pages.deletePageById);
+app.use(auths.validateToken);
 
 router.route('/')
-  .get(auths.validateToken, pages.getPages);
+  .get(pages.getPageById)
+  .post(auths.validateToken, pages.createPage)
+  .put(pages.updatePage)
+  .delete(pages.deletePageById);
 
 module.exports = router;

@@ -9,6 +9,8 @@ html(lang='eng')
   body
     .container
       block main
-    script(src="js/main.min.js")
-      if dev
-        script(src='//localhost:10000/livereload.js')
+    script(src="/js/main.min.js")
+    if token
+        script localStorage.token = '#{token}'
+    if dev
+      script(src='//localhost:10000/livereload.js')

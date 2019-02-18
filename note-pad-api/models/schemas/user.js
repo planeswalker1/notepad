@@ -16,7 +16,7 @@ var userSchema = new Schema({
 // methods for validating password
 userSchema.methods.comparePassword = function(pw, callback) {
 	bcrypt.compare(pw, this.hash, function(err, isMatch) {
-    console.log(pw, this.hash, "in compare password")
+    console.log(pw, isMatch, "in compare password");
     if (err) return callback(err);
 
 		callback(null, isMatch);
@@ -41,7 +41,7 @@ userSchema.pre('save', function(next) {
 
     bcrypt.hash(user.hash, salt, function(err, hash) {
         // Store hash in your password DB.
-        console.log('HASHED')
+        console.log('HASHED');
         user.hash = hash;
         return next();
     });

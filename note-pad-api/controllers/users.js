@@ -11,8 +11,8 @@ exports.getUsers = function (req, res, next) {
 };
 
 exports.getUserById = function (req, res, next) {
-  // TODO check if populating pages work
-  User.findById(req.params.id)
+  console.log('req.user in getUserById', req.user);
+  User.findById(req.user.id)
     .populate('pages')
     .exec(function (err, user) {
       if (err) next(err);
@@ -72,7 +72,7 @@ exports.updateUserById = function (req, res, next) {
         // Store hash in your password DB.
         userData.hash = hash;
 
-        User.findByIdAndUpdate(req.params.id, userData, { new: true }, function (err, user) {
+        User.findByIdAndUpdate(req.user.id, userData, { new: true }, function (err, user) {
           if (err) return next(err);
 
           if (!user) return res.status(404).send('No user with that ID');

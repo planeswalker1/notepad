@@ -10,7 +10,7 @@ exports.getPages = function (req, res, next) {
 };
 
 exports.getPageById = function (req, res, next) {
-  Page.findById(req.params.id, function (err, page) {
+  Page.findById(req.user.id, function (err, page) {
     if (err) return next(err);
 
     if (!page)return res.status(404).send('No page with that ID');
@@ -19,28 +19,31 @@ exports.getPageById = function (req, res, next) {
 };
 
 exports.createPage = function (req, res, next) {
-  var pageData = {};
   // validate inputs
-  if (req.body.name && typeof req.body.name === 'string') {
-    pageData.name = req.body.name;
-  }
-  if (req.body.text && typeof req.body.text === 'string') {
-    pageData.text = req.body.text;
-  }
-
+  if (typeof req.body.name !== 'string')
+    return res.status(400).send('Invalid Title');
+  if (typeof req.body.text !== 'string')
+    return res.status(400).send('Invalid Note');
+  
+  // add page info
+  var pageData = {};
+  pageData.name = req.body.name;
+  pageData.text = req.body.text;
+  console.log('pageData', pageData);
+  
   // create page with pageData
   var newPage = new Page(pageData);
   newPage.save(function (err, page) {
     if (err) return next(err);
-
-    // created page
+    
     console.log('created page', page);
     // look for user to store page id into
-    User.findById({ _id: req.params.id }, function (err, user) {
-      console.log('found user to store page to', user);
+    User.findById({ _id: req.user.id }, function (err, user) {
       if (err) return next(err);
+      if (!user)
+        return res.status(404).send('No user with that ID');
 
-      if (!user) return res.status(404).send('No user with that ID');
+      console.log('found user to store page to', user);
       // add id of page to user pages
       user.pages.push(page._id);
       user.save(function (err) {
@@ -54,7 +57,7 @@ exports.createPage = function (req, res, next) {
 };
 
 exports.updatePage = function (req, res, next) {
-  Page.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, page) {
+  Page.findByIdAndUpdate(req.user.id, req.body, { new: true }, function (err, page) {
     if (err) return next(err);
 
     if (!page) return res.status(404).send('No user with that ID');
@@ -63,7 +66,7 @@ exports.updatePage = function (req, res, next) {
 };
 
 exports.deletePageById = function (req, res, next) {
-  Page.findByIdAndDelete(req.params.id, function (err, page) {
+  Page.findByIdAndDelete(req.user.id, function (err, page) {
     if (err) return next(err);
 
     if (!page) return res.status(404).send('No page with that ID');

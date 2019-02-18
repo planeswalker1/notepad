@@ -1,6 +1,13 @@
 extends template
 block main
-  .error
-  .modal
-    h1 Request Worked
-  h1 This is gonna be hard
+  header
+    nav
+      p NotePad
+      ul
+        li: a(href='/login') Login
+        li: a(href='/register') Sign Up
+    p Save Your're Notes!
+    p: a(href='/register') Sign Up
+  body
+    p Need a place to store your notes?
+    p Sign up and get a personal notepad

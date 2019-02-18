@@ -16,6 +16,7 @@ what is in a page
 what i want to do today
 ===================================
 
-have users contain a reference to their pages
+
 have a route where you can add a page to the user object
+
 authentication

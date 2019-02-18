@@ -1,0 +1,17 @@
+extends template
+
+block main
+  nav
+    p NotePad
+    ul
+      li: a(href='/notes?token=' + token) Notes
+      li: a(href='/notes/create?token=' + token) Create A Note
+      li: a(href='/logout') Logout
+  h1 Welcome, Here are your notes
+  each note in notes
+    div.note
+      each detail in note
+        p=detail
+  else
+    p There are no notes :(
+  

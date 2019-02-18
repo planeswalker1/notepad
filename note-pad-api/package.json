@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npm install",
     "start": "nodemon app.js",
-    "dev": "mongod -f models/mongod.conf & node app.js",
+    "dev": "mongod -f models/mongod.conf & nodemon app.js",
     "mongo-kill": "killall mongod"
   },
   "dependencies": {
@@ -18,6 +18,6 @@
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.4.7",
     "morgan": "^1.9.1",
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.10"
   }
 }

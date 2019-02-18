@@ -1,13 +1,15 @@
 console.log('main.min.js ran');
 var registerForm = document.querySelector('.form--register');
 var loginForm = document.querySelector('.form--login');
+var createNoteForm = document.querySelector('.form--createnote');
 // var modal = document.querySelector('.modal');
 var inputs = Array.from(document.querySelectorAll('input'));
-
-console.log('main.min.js got to before log forms');
+var textarea = document.querySelector('textarea');
 console.log('registerForm', registerForm);
 console.log('loginForm', loginForm);
-
+console.log('createNoteForm', createNoteForm);
+console.log('inputs', inputs);
+console.log('textarea', textarea);
 
 // close modal if clicked outside
 // modal.addEventListener('click', function(event) {
@@ -17,12 +19,21 @@ console.log('loginForm', loginForm);
 //   }
 // });
 
-// clear border on input focus
-inputs.forEach(function (input) {
-  input.addEventListener('focus',function () {
+// =====================
+// input event listeners
+// =====================
+if (textarea) {
+  textarea.addEventListener('focus', function () {
     clearError(this);
   });
-});
+}
+if (inputs) {
+  inputs.forEach(function (input) {
+    input.addEventListener('focus', function () {
+      clearError(this);
+    });
+  });
+}
 
 // ====================
 // form event listeners
@@ -36,6 +47,9 @@ if (loginForm) {
   loginForm.addEventListener('submit', processLogin);
 }
 
+if (createNoteForm) {
+  createNoteForm.addEventListener('submit', processNote);
+}
 // =====================
 // form submit functions
 // =====================
@@ -68,16 +82,17 @@ function processRegister (event) {
     email: registerForm.email.value,
     password: registerForm.password.value
   };
-  console.log('userData', userData)
+  console.log('userData', userData);
+
   // request
   // what do i want to do
   // make a request to send information to back end server to eventualy validate and create a user
-  // display login success modal if success
   // handle errors
   // redirect to login page
-
   fetch('/register', {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json'
+    },
     method: 'POST',
     body: JSON.stringify(userData)
   })
@@ -116,17 +131,19 @@ function processLogin () {
     email: loginForm.email.value,
     password: loginForm.password.value
   };
-  console.log(userLoginData);
+  console.log('userLoginData', userLoginData);
 
-    // request
-    // what do i want to do
-    // request to back end with login information to get a token if authenticated
-    // store the token to localStorage
-    // redirect to users notes
-    // else return an error
+  // request
+  // what do i want to do
+  // request to back-end server with login information to get a token if authenticated
+  // handle errors
+  // store the token in localStorage
+  // redirect to users notes
 
   fetch('/login', {
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json'
+    },
     method: 'POST',
     body: JSON.stringify(userLoginData)
   })
@@ -135,12 +152,63 @@ function processLogin () {
       return submitError(res);
     } else {
       return res.json().then(function (result) {
+        console.log('fetch POST /login worked, heres the result', result);
         localStorage.token = result.token;
         window.location = '/notes?token=' + result.token;
       });
     }
   })
   .catch(submitError);
+}
+
+function processNote () {
+  event.preventDefault();
+  console.log('validating inputs');
+  var errorMessage = '';
+  if (!createNoteForm.name.value) {
+    error(createNoteForm.name);
+    errorMessage += 'Missing Title';
+  }
+  if (!createNoteForm.text.value) {
+    if (errorMessage) {
+      error(createNoteForm.text);
+      errorMessage += '<br /> Missing Note';
+    } else {
+      error(createNoteForm.text);
+      errorMessage += 'Missing Note';
+    }
+  }
+  if (errorMessage) {
+    return displayError(errorMessage);
+  }
+
+  console.log('sending request');
+  var noteData = {
+    name: createNoteForm.name.value,
+    text: createNoteForm.text.value
+  }
+  console.log('noteData', noteData);
+  // request
+  // what do i want to do
+  // make a request to back-end server with note information to save a note to the users note db
+  // handle errors
+  // redirect users to all their notes
+  fetch('/notes', {
+    headers: { 
+      'Content-Type': 'application/json',
+      'x-access-token': localStorage.token 
+     },
+    method: 'POST',
+    body: JSON.stringify(noteData)
+  })
+  .then(function (res) {
+    if (!res.ok) {
+      return submitError(res);
+    } else {
+      console.log('fetch post /notes worked, here is the res', res);
+      window.location = '/notes?token=' + localStorage.token        
+    }
+  }).catch(submitError);
 }
 // ==========================
 // input validation functions
@@ -183,6 +251,7 @@ function displayError(message) {
 // =====================
 // register form submit callbacks
 // =====================
+
 function submitError (res, message) {
   if (res.status >= 400 && res.status < 500) {
     return res.text().then(function (message) {
@@ -194,3 +263,5 @@ function submitError (res, message) {
   }
   return displayError('There was a problem submitting your form. Please try again later.');
 }
+
+console.log('end main.min.js');
