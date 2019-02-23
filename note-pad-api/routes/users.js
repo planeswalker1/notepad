@@ -5,12 +5,10 @@ const app = express();
 const users = require('../controllers/users');
 const auths = require('../controllers/auths');
 
-app.use(auths.validateToken);
-
 router.route('/')
   .get(auths.validateToken, users.getUserById)
-  .post(users.createUser)
-  .put(users.updateUserById)
-  .delete(users.deleteUserById);
+  .post(users.createUser);
+  // .put(users.updateUserById)
+  // .delete(users.deleteUserById);
 
 module.exports = router;

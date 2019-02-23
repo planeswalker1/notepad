@@ -6,12 +6,10 @@ let router = express.Router();
 const pages = require('../controllers/pages');
 const auths = require('../controllers/auths');
 
-app.use(auths.validateToken);
-
 router.route('/')
-  .get(pages.getPageById)
-  .post(auths.validateToken, pages.createPage)
-  .put(pages.updatePage)
-  .delete(pages.deletePageById);
+  // .get(pages.getPageById)
+  .post(auths.validateToken, pages.createPage);
+  // .put(pages.updatePage)
+  // .delete(pages.deletePageById);
 
 module.exports = router;

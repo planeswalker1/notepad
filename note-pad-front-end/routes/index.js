@@ -17,6 +17,9 @@ router.get('/register', function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
+  console.log('someone requested to register');
+  console.log('req.body', req.body);
+  console.log('apiUrl', config.apiUrl + '/users');
   request.post(config.apiUrl + '/users', { form: req.body }).pipe(res);
 });
 
@@ -26,10 +29,17 @@ router.get('/login', function (req, res, next) {
 });
 
 router.post('/login', function (req, res, next) {
+  console.log('someone requested to login')
   request.post(config.apiUrl + '/auth/token', { form: req.body }).pipe(res);
 });
 
-app.use(auths.userRequired);
+// logout a user
+router.get('/logout', function (req, res, next) {
+  console.log('somone requested to logout');
+  console.log('their req.query.token', req.query.token);
+  request.put(config.apiUrl + '/logout?token=' + req.query.token);
+  return res.redirect('/');
+});
 
 // user's notes page
 router.get('/notes', auths.userRequired, function (req, res, next) {  

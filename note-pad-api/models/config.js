@@ -1,8 +1,15 @@
-module.exports = {
-  port: 3000,
-  dbUrl: 'mongodb://localhost:5000/note-pad',
-  // secret for creating and decoding tokens
-  secret: 'ThisIsDefinitelyNotTheSecret',
-  // for bcrypt
-  saltRounds: 10
-};
+const express = require('express');
+const app = express();
+
+if (app.get('env') === 'production') {
+  module.exports = {
+    port: Number(process.env.PORT),
+    dbUrl: process.env.DB_URL,
+    secret: process.env.SECRET,
+    saltRounds: Number(process.env.SALT_ROUNDS)
+  }
+} else {
+  var config = require('./config_dev.js');
+  console.log(config);
+  module.exports = config;
+}

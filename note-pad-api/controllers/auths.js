@@ -14,15 +14,14 @@ exports.loginUser = function (req, res, next) {
   console.log('loginUser in api ran')
   
   if (typeof req.body.email !== 'string')
-  return res.status(400).send('Missing email');
+    return res.status(400).send('Missing email');
   if (typeof req.body.password !== 'string')
-  return res.status(400).send('Missing password');
+    return res.status(400).send('Missing password');
   
   
   console.log('looking for user');
   User.findOne({ email: req.body.email }, function (err, user) {
-    if (err)
-      return next(err);
+    if (err) return next(err);
     if (!user)
       return res.status(400).send('No user with that email');
 
@@ -54,7 +53,7 @@ exports.loginUser = function (req, res, next) {
   });
 }
 
-// this function is going to seaerch for a token in the req.body, url, or headers
+// this function is going to search for a token in the req.body, url, or headers
 // try to decode the token
   // set req.user to decoded token
 // else
@@ -62,10 +61,13 @@ exports.loginUser = function (req, res, next) {
 // send to next middleware transporting the token
 exports.validateToken = function (req, res, next) {
   console.log('validateToken in api ran');
-  console.log('token passed from front-end server headers', req.headers['x-access-token']);
+  if (req.headers['x-access-token'])
+    console.log('token passed from front-end server headers', req.headers['x-access-token']);
 
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  if (!token) return res.status(403).send('This endpoint requires a token');
+
+  if (!token)
+    return res.status(403).send('This endpoint requires a token');
 
   try {
     var decoded = jwt.verify(token, config.secret);
@@ -73,7 +75,7 @@ exports.validateToken = function (req, res, next) {
     return res.status(403).send('Failed to authenticate token');
   }
 
-  console.log('looking for user')
+  console.log('looking for user');
   User.findById(decoded.id, function (err, user) {
     if (err)
       return next(err);
@@ -89,5 +91,22 @@ exports.validateToken = function (req, res, next) {
     req.token = user.token;
     console.log('req.token', req.token);
     next();
+  });
+}
+
+exports.logOutUser = function (req, res, next) {
+  console.log('logOutUser ran');
+  User.findById(req.user.id, function (err, user) {
+    if (err) return next(err);
+    if (!user)
+      return res.status(404).send('No user with that ID');
+    console.log('found user', user);
+    user.token = '';
+    console.log('user token removed', user);
+    user.save(function (err, user) {
+      if (err) return next(err);
+      console.log('user updated! deleted their token');
+      return res.sendStatus(200);
+    });
   });
 }

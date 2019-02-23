@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path')
-const logger = require('morgan');
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
+var logger = require('morgan');
 
 const config = require('./app/models/config');
 const routes = require('./routes/index');
@@ -13,7 +13,8 @@ const app = express();
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // log if dev
-if (app.get('env') === 'development') app.locals.dev = true;
+if (app.get('env') === 'development')
+  app.locals.dev = true;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'app', 'views'));
@@ -52,6 +53,6 @@ app.use(function (err, req, res, next) {
   return res.sendStatus(err.status || 500);
 });
 
-app.listen(config.PORT, function () {
-  console.log('Listening at http://localhost:%s in %s mode', config.PORT, app.get('env'));
+app.listen(config.port, function () {
+  console.log('Listening at port %s in %s mode', config.port, app.get('env'));
 });
