@@ -1,19 +1,20 @@
 extends template
 
 block main
-  nav
-    p NotePad
-    ul
-      li: a(href='/notes?token=' + token) Notes
-      li: a(href='/notes/create?token=' + token) Create A Note
-      li: a(class='button--logout') Logout
+  header
+    nav
+      p NotePad
+      ul
+        li: a(href='/notes?token=' + token) Notes
+        li: a(href='/notes/create?token=' + token) Create A Note
+        li: a(class='button--logout') Logout
   form.form--createnote
     h1 Create Your Note!
     .error-message
     .form__group
-      label.group__label(for="title") title:
-      input.group__input(id="title" type="text" name="name")
+      label.group__label(for="title") Title:
+      input.group__input(id="title" type="text" placeholder='Your title' name="name")
     .form__group
       label.group__label(for="note") Note:
-      <textarea id="note" rows="4" cols="50" name="text"></textarea>
+      textarea(id="note" placeholder='Your note' rows="4" cols="50" name="text")
     button(type="submit") Create Note

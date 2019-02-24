@@ -6,6 +6,7 @@ var createNoteForm = document.querySelector('.form--createnote');
 var inputs = Array.from(document.querySelectorAll('input'));
 var textarea = document.querySelector('textarea');
 var logoutButton = document.querySelector('.button--logout');
+var updateNoteForm = document.querySelector('.form--update');
 
 console.log('registerForm', registerForm);
 console.log('loginForm', loginForm);
@@ -13,6 +14,7 @@ console.log('createNoteForm', createNoteForm);
 console.log('inputs', inputs);
 console.log('textarea', textarea);
 console.log('logout button', logoutButton);
+console.log('updateNoteForm', updateNoteForm);
 
 // close modal if clicked outside
 // modal.addEventListener('click', function(event) {
@@ -47,13 +49,14 @@ if (logoutButton) {
 if (registerForm) {
   registerForm.addEventListener('submit', processRegister);
 }
-
 if (loginForm) {
   loginForm.addEventListener('submit', processLogin);
 }
-
 if (createNoteForm) {
-  createNoteForm.addEventListener('submit', processNote);
+  createNoteForm.addEventListener('submit', processNewNote);
+}
+if (updateNoteForm) {
+  updateNoteForm.addEventListener('submit', processNoteUpdate);
 }
 // =====================
 // form submit functions
@@ -185,7 +188,7 @@ function processLogout () {
     if (!res.ok) {
       return submitError(res);
     } else {
-      console.log('server hit', res);
+      console.log('server hit for logout', res);
       return res.text().then(function (result) {
         console.log('fetch PUT /logout worked, heres the result', result);
         localStorage.token = '';
@@ -198,7 +201,7 @@ function processLogout () {
 
 // create a note
 
-function processNote (event) {
+function processNewNote (event) {
   event.preventDefault();
   console.log('validating inputs');
   var errorMessage = '';
@@ -246,6 +249,66 @@ function processNote (event) {
       window.location = '/notes?token=' + localStorage.token        
     }
   }).catch(submitError);
+}
+
+// update a note
+function processNoteUpdate (event) {
+  event.preventDefault();
+  console.log('processUpdate ran');
+  console.log(updateNoteForm.name);
+  console.log(updateNoteForm.name.value);
+  console.log(!updateNoteForm.name.value);
+  console.log(updateNoteForm.text);
+  console.log(updateNoteForm.text.value);
+  console.log(!updateNoteForm.text.value);
+  // validate inputs
+  var errorMessage = '';
+  if (!updateNoteForm.name.value) {
+    error(updateNoteForm.name);
+    errorMessage += 'Missing Title';
+  }
+  if (!updateNoteForm.text.value) {
+    error(updateNoteForm.text);
+    if (errorMessage) {
+      errorMessage += '<br /> Missing Note';
+    } else {
+      errorMessage += 'Missing Note';
+    }
+  }
+  if (errorMessage) {
+    return displayError(errorMessage);
+  }
+  // sending request
+  var noteData = {
+    name: updateNoteForm.name.value,
+    text: updateNoteForm.text.value
+  };
+  console.log('accessing url');
+  var pathName = window.location.pathname;
+  var id = pathName.substring(pathName.lastIndexOf('/') + 1);
+  console.log('expected id', id);
+  // request - what do i want to do
+  // request to back end with updated form data
+  // hopefully recieve an ok and return back to users notes
+  // if error display error
+  fetch('/notes/' + id, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': localStorage.token
+    },
+    method: 'PUT',
+    body: JSON.stringify(noteData)
+  })
+  .then(function (res) {
+    console.log('back end responded');
+    if (!res.ok) {
+      console.log('there was error');
+      return submitError(res);
+    }
+    console.log('success should redirect');
+    window.location = '/notes?token=' + localStorage.token;
+  })
+  .catch(submitError);
 }
 // ==========================
 // input validation functions

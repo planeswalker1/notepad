@@ -9,15 +9,6 @@ exports.getPages = function (req, res, next) {
   });
 };
 
-exports.getPageById = function (req, res, next) {
-  Page.findById(req.user.id, function (err, page) {
-    if (err) return next(err);
-
-    if (!page)return res.status(404).send('No page with that ID');
-    return res.json(page);
-  });
-};
-
 exports.createPage = function (req, res, next) {
   // validate inputs
   if (typeof req.body.name !== 'string')
@@ -58,22 +49,60 @@ exports.createPage = function (req, res, next) {
 
 // TODO update a note 
 // Idea: The token from the user has a property of notes. i can maybe get the id from the token and use it to update that page
-exports.updatePage = function (req, res, next) {
-  User.findById(req.user.pages[req.params.index], function (err, user) {
+// new idea
+// this is gonna be to load the form to update a note
+  // pass the index in req.params.index
+  // request to GET /notes/:index
+  // authenticate
+  // look for user with provided id
+  // populate the user's notes
+  // return notes[i] where i is req.params.index
+// exports.getPageToUpdate = function (req, res, next) {
+//   console.log('getPageToUpdate in api ran');
+//   console.log('req.params.index', Number(req.params.index), typeof req.params.index);
+//   User.findById(req.user.id)
+//   .populate('pages', { _id: 1, name: 1, text: 1 })
+//   .exec(function (err, user) {
+//     if (err) return next(err);
+//     if (!user)
+//       return res.status(404).send('No user with that ID');
+
+//     console.log('found user');
+//     console.log('user.pages', user.pages);
+//     console.log('requested page to update', user.pages[req.params.index]._id);
+//     return res.sendStatus(200);
+//   });
+// };
+
+exports.getPageById = function (req, res, next) {
+  console.log('getPageById in api ran');
+  console.log('getting page to render update form and fill with info');
+  console.log('req.params.id', req.params.id, typeof req.params.id);
+  Page.findById(req.params.id, function (err, page) {
     if (err) return next(err);
-    if (!user) 
-      return res.status(404).send('No user with that ID');
+    if (!page)
+      return res.status(404).send('No page with that ID');
 
-    console.log(user.pages);
-  });
-
-  Page.findByIdAndUpdate(req.user.id, req.body, { new: true }, function (err, page) {
-    if (err) return next(err);
-
-    if (!page) return res.status(404).send('No user with that ID');
-    return res.sendStatus(200);
+    console.log('found page', page);
+    return res.json(page);
   });
 };
+
+exports.updatePageById = function (req, res, next) {
+  console.log('updatePageById in api ran');
+  console.log('expected id', req.params.id, typeof req.params.id);
+  console.log('expected req.body', req.body);
+  console.log('req.body was empty took me 10 years to find out why');
+  Page.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, page) {
+    if (err) return next(err);
+    if (!page) 
+      return res.status(404).send('No page with that ID');
+
+    console.log('updated note!', page);
+    
+    return res.sendStatus(200);
+  });
+}
 
 exports.deletePageById = function (req, res, next) {
   Page.findByIdAndDelete(req.user.id, function (err, page) {

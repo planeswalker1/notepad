@@ -35,8 +35,7 @@ exports.loginUser = function (req, res, next) {
       console.log('creating token');
       var payload = {
         id: user._id,
-        email: user.email,
-        notes: user.pages
+        email: user.email
       };
       console.log('payload', payload);
       var token = jwt.sign(payload, config.secret);

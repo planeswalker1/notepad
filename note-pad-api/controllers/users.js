@@ -13,8 +13,10 @@ exports.getUsers = function (req, res, next) {
 exports.getUserById = function (req, res, next) {
   console.log('req.user in api hit getUserById()', req.user);
   User.findById(req.user.id)
-    // this works idk why   
-    .populate('pages', {_id: 1, name: 1, text: 1})
+    // this works idk why
+    // old jank version
+    // { 'pages', { _id: 1, name: 1, text: 1 }   
+    .populate({ path: 'pages', select: '_id name text' })
     .exec(function (err, user) {
       if (err) next(err);
       if (!user)

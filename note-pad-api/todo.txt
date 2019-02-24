@@ -16,7 +16,4 @@ what is in a page
 what i want to do today
 ===================================
 
-
-have a route where you can add a page to the user object
-
-authentication
+update a note route

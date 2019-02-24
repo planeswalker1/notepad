@@ -1,18 +1,21 @@
 extends template
 
 block main
-  nav
-    p NotePad
-    ul
-      li: a(href='/notes?token=' + token) Notes
-      li: a(href='/notes/create?token=' + token) Create A Note
-      li: a(class='button--logout') Logout
+  header
+    nav
+      p NotePad
+      ul
+        li: a(href='/notes?token=' + token) Notes
+        li: a(href='/notes/create?token=' + token) Create A Note
+        li: a(class='button--logout') Logout
   .error-message
   h1 Welcome, Here are your notes
   each note in notes
     div.note
-      each detail in note
-        p=detail
+      h1=note.name
+      p=note.text
+      a(href='/notes/delete/' + note._id + '?token=' + token) Delete Note
+      a(href='/notes/update/' + note._id + '?token=' + token) Update Note
   else
     p There are no notes :(
   
