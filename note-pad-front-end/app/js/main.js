@@ -5,11 +5,14 @@ var createNoteForm = document.querySelector('.form--createnote');
 // var modal = document.querySelector('.modal');
 var inputs = Array.from(document.querySelectorAll('input'));
 var textarea = document.querySelector('textarea');
+var logoutButton = document.querySelector('.button--logout');
+
 console.log('registerForm', registerForm);
 console.log('loginForm', loginForm);
 console.log('createNoteForm', createNoteForm);
 console.log('inputs', inputs);
 console.log('textarea', textarea);
+console.log('logout button', logoutButton);
 
 // close modal if clicked outside
 // modal.addEventListener('click', function(event) {
@@ -34,7 +37,9 @@ if (inputs) {
     });
   });
 }
-
+if (logoutButton) {
+  logoutButton.addEventListener('click', processLogout)
+}
 // ====================
 // form event listeners
 // ====================
@@ -53,6 +58,8 @@ if (createNoteForm) {
 // =====================
 // form submit functions
 // =====================
+
+// register a user
 
 function processRegister (event) {
   event.preventDefault();
@@ -103,7 +110,9 @@ function processRegister (event) {
   .catch(submitError);
 }
 
-function processLogin () {
+// login a user
+
+function processLogin (event) {
   event.preventDefault();
 
   console.log('validating inputs');
@@ -161,7 +170,35 @@ function processLogin () {
   .catch(submitError);
 }
 
-function processNote () {
+// logout a user
+
+function processLogout () {
+  console.log('processLogout ran!');
+  fetch('/logout', {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': localStorage.token 
+    },
+    method: 'PUT'
+  })
+  .then(function (res) {
+    if (!res.ok) {
+      return submitError(res);
+    } else {
+      console.log('server hit', res);
+      return res.text().then(function (result) {
+        console.log('fetch PUT /logout worked, heres the result', result);
+        localStorage.token = '';
+        window.location = '/';
+      });
+    }
+  })
+  .catch(submitError);
+}
+
+// create a note
+
+function processNote (event) {
   event.preventDefault();
   console.log('validating inputs');
   var errorMessage = '';

@@ -4,6 +4,10 @@
 node_modules
 main.css
 main.min.js
+config_dev.js
+package-lock.json
+mongod.conf
+todo.txt
 
 # Compiled source #
 ###################

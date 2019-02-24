@@ -6,7 +6,7 @@ block main
     ul
       li: a(href='/notes?token=' + token) Notes
       li: a(href='/notes/create?token=' + token) Create A Note
-      li: a(href='/logout') Logout
+      li: a(class='button--logout') Logout
   form.form--createnote
     h1 Create Your Note!
     .error-message

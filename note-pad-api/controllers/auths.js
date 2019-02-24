@@ -65,7 +65,7 @@ exports.validateToken = function (req, res, next) {
     console.log('token passed from front-end server headers', req.headers['x-access-token']);
 
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
+  console.log('token that was caught', token);
   if (!token)
     return res.status(403).send('This endpoint requires a token');
 
@@ -106,7 +106,7 @@ exports.logOutUser = function (req, res, next) {
     user.save(function (err, user) {
       if (err) return next(err);
       console.log('user updated! deleted their token');
-      return res.sendStatus(200);
+      return res.status(200).send('ok');
     });
   });
 }

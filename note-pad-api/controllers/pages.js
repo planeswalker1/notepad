@@ -56,7 +56,17 @@ exports.createPage = function (req, res, next) {
   });
 };
 
+// TODO update a note 
+// Idea: The token from the user has a property of notes. i can maybe get the id from the token and use it to update that page
 exports.updatePage = function (req, res, next) {
+  User.findById(req.user.pages[req.params.index], function (err, user) {
+    if (err) return next(err);
+    if (!user) 
+      return res.status(404).send('No user with that ID');
+
+    console.log(user.pages);
+  });
+
   Page.findByIdAndUpdate(req.user.id, req.body, { new: true }, function (err, page) {
     if (err) return next(err);
 
