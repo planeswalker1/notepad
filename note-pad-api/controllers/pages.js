@@ -1,5 +1,6 @@
 const Page = require('../models/schemas/page');
 const User = require('../models/schemas/user');
+const mongoose = require('mongoose');
 
 exports.getPages = function (req, res, next) {
   Page.find({}, function (err, pages) {
@@ -96,7 +97,7 @@ exports.updatePageById = function (req, res, next) {
   Page.findByIdAndUpdate(req.params.id, req.body, { new: true }, function (err, page) {
     if (err) return next(err);
     if (!page) 
-      return res.status(404).send('No page with that ID');
+      return res.status(404).send('No Note with that ID');
 
     console.log('updated note!', page);
     
@@ -105,11 +106,29 @@ exports.updatePageById = function (req, res, next) {
 }
 
 exports.deletePageById = function (req, res, next) {
-  Page.findByIdAndDelete(req.user.id, function (err, page) {
+  console.log('deletePageById called in api');
+  console.log('expected page id', req.params.id);
+  Page.findByIdAndDelete(req.params.id, function (err, page) {
     if (err) return next(err);
-
-    if (!page) return res.status(404).send('No page with that ID');
-    return res.sendStatus(200);
+    if (!page) 
+      return res.status(404).send('No Note with that ID');
+    console.log('deleted note');
+    console.log('finding User with that note to delete from their user.pages');
+    
+    User.findOne({ 'pages': mongoose.Types.ObjectId(req.params.id) }, function (err, user) {
+      if (err) console.log(err);
+      if (!user)
+        return res.sendStatus(200);
+      
+      console.log('found user that has that id', user);
+      console.log('user.pages', user.pages);
+      let indexOfPage = user.pages.indexOf(req.params.id);
+      user.pages.splice(indexOfPage, 1);
+      user.save(function (err) {
+        if (err) return next(err);
+          return res.sendStatus(200);
+      });
+    })
   });
 };
 

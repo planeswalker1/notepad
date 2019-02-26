@@ -95,12 +95,12 @@ router.post('/notes', auths.userRequired, function (req, res, next) {
     url: config.apiUrl + '/pages',
     form: req.body,
     headers: {
-      'x-access-token': req.token
+      'x-access-token': req.token,
+      'Content-type': 'application/json'
     }
   }).pipe(res);
 });
 
-// TODO update a note
 router.get('/notes/update/:id', auths.userRequired, function (req, res, next) {
   console.log('/notes/update/:id hit');
   console.log('expected id of note', req.params.id);
@@ -113,13 +113,12 @@ router.get('/notes/update/:id', auths.userRequired, function (req, res, next) {
     console.log('fetch body returned');
     if (response.statusCode === 200) {
       console.log('found a note to update', JSON.parse(body));
-      console.log('should get to here');
       return res.render('updatenote', {
         token: req.token,
         note: JSON.parse(body)
       });
     } else {
-      console.log('no note found');
+      console.log('no note to update found');
       res.redirect(404, '/notes?token=' + req.token);
     } 
   });
@@ -131,9 +130,45 @@ router.put('/notes/:id', auths.userRequired, function (req, res, next) {
   return request.put({
     url: config.apiUrl + '/pages/' + req.params.id,
     headers: {
+      'Content-Type': 'application/json',
       'x-access-token': req.token
     },
     form: req.body
+  }).pipe(res);
+});
+
+// TODO delete a note
+router.get('/notes/delete/:id', auths.userRequired, function (req, res, next) {
+  console.log('getting confirm delete form');
+  console.log('expected page id', req.params.id);
+  request.get({
+    url: config.apiUrl + '/pages/' + req.params.id,
+    headers: {
+      'x-access-token': req.token
+    }
+  }, function (err, response, body) {
+    console.log('fetch request returned');
+    if (response.statusCode === 200) {
+      console.log('found note to delete', JSON.parse(body));
+      return res.render('deletenote', {
+        token: req.token,
+        note: JSON.parse(body)
+      });
+    } else {
+      console.log('no note to delete found');
+      return res.redirect(404, '/notes?token=' + req.token);
+    }
+  });
+});
+
+router.delete('/notes/:id', auths.userRequired, function (req, res, next) {
+  console.log('sending request to delete page');
+  console.log('expected id', req.params.id);
+  request.delete({
+    url: config.apiUrl + '/pages/' + req.params.id,
+    headers: {
+      'x-access-token': req.token
+    }
   }).pipe(res);
 });
 

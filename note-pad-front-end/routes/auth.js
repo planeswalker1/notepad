@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../app/models/config');
 
 exports.userRequired = function (req, res, next) {
-  console.log('this is getting hit')  
+  console.log('userRequired ran'); 
   validateToken(req, res, next);
 };
 

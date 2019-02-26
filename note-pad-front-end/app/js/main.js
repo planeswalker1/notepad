@@ -2,11 +2,12 @@ console.log('main.min.js ran');
 var registerForm = document.querySelector('.form--register');
 var loginForm = document.querySelector('.form--login');
 var createNoteForm = document.querySelector('.form--createnote');
-// var modal = document.querySelector('.modal');
+var modal = document.querySelector('.modal--delete');
 var inputs = Array.from(document.querySelectorAll('input'));
 var textarea = document.querySelector('textarea');
 var logoutButton = document.querySelector('.button--logout');
-var updateNoteForm = document.querySelector('.form--update');
+var updateNoteForm = document.querySelector('.form--updateNote');
+var deleteNoteForm = document.querySelector('.form--deleteNote');
 
 console.log('registerForm', registerForm);
 console.log('loginForm', loginForm);
@@ -15,14 +16,17 @@ console.log('inputs', inputs);
 console.log('textarea', textarea);
 console.log('logout button', logoutButton);
 console.log('updateNoteForm', updateNoteForm);
+console.log('modal', modal);
 
 // close modal if clicked outside
-// modal.addEventListener('click', function(event) {
-//   event.stopPropagation();
-//   if (event.target === modal) {
-//     modal.style.display = 'none';
-//   }
-// });
+if (modal) {
+  modal.addEventListener('click', function (event) {
+    event.stopPropagation();
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+}
 
 // =====================
 // input event listeners
@@ -58,12 +62,14 @@ if (createNoteForm) {
 if (updateNoteForm) {
   updateNoteForm.addEventListener('submit', processNoteUpdate);
 }
+if (deleteNoteForm) {
+  deleteNoteForm.addEventListener('submit', processDeleteNote);
+}
 // =====================
 // form submit functions
 // =====================
 
 // register a user
-
 function processRegister (event) {
   event.preventDefault();
 
@@ -114,7 +120,6 @@ function processRegister (event) {
 }
 
 // login a user
-
 function processLogin (event) {
   event.preventDefault();
 
@@ -174,7 +179,6 @@ function processLogin (event) {
 }
 
 // logout a user
-
 function processLogout () {
   console.log('processLogout ran!');
   fetch('/logout', {
@@ -200,7 +204,6 @@ function processLogout () {
 }
 
 // create a note
-
 function processNewNote (event) {
   event.preventDefault();
   console.log('validating inputs');
@@ -305,7 +308,36 @@ function processNoteUpdate (event) {
       console.log('there was error');
       return submitError(res);
     }
-    console.log('success should redirect');
+    console.log('success, updated note, should redirect');
+    window.location = '/notes?token=' + localStorage.token;
+  })
+  .catch(submitError);
+}
+
+// delete a note
+function processDeleteNote (event) {
+  event.preventDefault();
+  console.log('requested to delete note');
+  // request what do i want to do
+  // send request to server to delete note from user
+  // recieve ok and return to users notes
+  // if error display error
+  console.log('accessing url');
+  var pathName = window.location.pathname;
+  console.log('pathName', pathName);
+  var id = pathName.substring(pathName.lastIndexOf('/') + 1);
+  console.log('expected id', id);
+  fetch('/notes/' + id, {
+    headers: {
+      'x-access-token': localStorage.token
+    },
+    method: 'DELETE'
+  })
+  .then(function (res) {
+    if (!res.ok) {
+      return submitError(res);
+    }
+    console.log('success, deleted note, should redirect');
     window.location = '/notes?token=' + localStorage.token;
   })
   .catch(submitError);
@@ -349,7 +381,7 @@ function displayError(message) {
 }
 
 // =====================
-// register form submit callbacks
+// form submit callbacks
 // =====================
 
 function submitError (res, message) {
